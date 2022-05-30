@@ -1,21 +1,37 @@
 package net.fabricmc.example;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.minecraft.item.*;
+import net.minecraft.util.registry.*;
+import net.minecraft.util.*;
+import net.minecraft.world.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.entity.*;
+import org.spongepowered.asm.mixin.injection.*;
+
+class MinecraftFoodItem extends Item {
+ 
+    public MinecraftFoodItem(Settings settings) {
+        super(settings);
+    }
+	
+	@Override
+    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+		super.finishUsing(stack,world,user);
+        throw new RuntimeException("YOU ATE MINECRAFT!!");
+        // return TypedActionResult.success(playerEntity.getStackInHand(hand));
+    }
+}
 
 public class ExampleMod implements ModInitializer {
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger("modid");
-
-	@Override
-	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-
-		LOGGER.info("Hello Fabric world!");
-	}
+ 
+    // an instance of our new item
+    public static final MinecraftFoodItem CUSTOM_ITEM = new MinecraftFoodItem(new Item.Settings().maxCount(127).fireproof().group(ItemGroup.MISC).food(new FoodComponent.Builder().hunger(1).saturationModifier(0.3F).build()));
+	
+    @Override
+    public void onInitialize() {
+        Registry.register(Registry.ITEM, new Identifier("ediblemc", "minecraft_"), CUSTOM_ITEM);
+    }
 }
