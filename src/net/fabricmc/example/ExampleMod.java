@@ -41,8 +41,9 @@ class MinecraftFoodItem extends Item {
 
 public class ExampleMod implements ModInitializer {
     public static int ticksUntilCrash;
+    public static int eatTimes;
     // an instance of our new item
-    public static final MinecraftFoodItem CUSTOM_ITEM = new MinecraftFoodItem(new Item.Settings().maxCount(64).fireproof().group(ItemGroup.MISC).group(ItemGroup.FOOD).group(ItemGroup.INVENTORY).food(new FoodComponent.Builder().hunger(1).saturationModifier(0.3F).alwaysEdible().build()));
+    public static final MinecraftFoodItem CUSTOM_ITEM = new MinecraftFoodItem(new Item.Settings().maxCount(64).fireproof().group(ItemGroup.MISC).food(new FoodComponent.Builder().hunger(1).saturationModifier(0.3F).alwaysEdible().build()));
 	
     @Override
     public void onInitialize() {
@@ -53,7 +54,11 @@ public class ExampleMod implements ModInitializer {
                 if (ticksUntilCrash>0) {
                     ticksUntilCrash--;
                 } else if (ticksUntilCrash==0) {
-                    throw new RuntimeException("YOU ATE MINECRAFT!!");
+                    ticksUntilCrash = -1;
+                    eatTimes+=1;
+                    if (eatTimes>3) {
+                        throw new RuntimeException("YOU ATE TOO MUCH MINECRAFT!!!");
+                    }
                 }
             }
         });
